@@ -16,6 +16,7 @@
 		12ADA7292859CA6200028312 /* TicTacToeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12ADA7282859CA6200028312 /* TicTacToeTests.swift */; };
 		12ADA7332859CA6200028312 /* TicTacToeUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12ADA7322859CA6200028312 /* TicTacToeUITests.swift */; };
 		12ADA7352859CA6200028312 /* TicTacToeUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12ADA7342859CA6200028312 /* TicTacToeUITestsLaunchTests.swift */; };
+		12ADA7462859CBF400028312 /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12ADA7452859CBF400028312 /* Game.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,6 +50,7 @@
 		12ADA72E2859CA6200028312 /* TicTacToeUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TicTacToeUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		12ADA7322859CA6200028312 /* TicTacToeUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TicTacToeUITests.swift; sourceTree = "<group>"; };
 		12ADA7342859CA6200028312 /* TicTacToeUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TicTacToeUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		12ADA7452859CBF400028312 /* Game.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Game.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -99,12 +101,11 @@
 		12ADA7102859CA6000028312 /* TicTacToe */ = {
 			isa = PBXGroup;
 			children = (
-				12ADA7112859CA6000028312 /* AppDelegate.swift */,
-				12ADA7132859CA6000028312 /* SceneDelegate.swift */,
-				12ADA7152859CA6000028312 /* ViewController.swift */,
-				12ADA7172859CA6000028312 /* Main.storyboard */,
+				12ADA7412859CB8900028312 /* Delegate */,
+				12ADA7422859CB9D00028312 /* Controller */,
+				12ADA7432859CBA900028312 /* View */,
 				12ADA71A2859CA6200028312 /* Assets.xcassets */,
-				12ADA71C2859CA6200028312 /* LaunchScreen.storyboard */,
+				12ADA7442859CBB500028312 /* Model */,
 				12ADA71F2859CA6200028312 /* Info.plist */,
 			);
 			path = TicTacToe;
@@ -125,6 +126,40 @@
 				12ADA7342859CA6200028312 /* TicTacToeUITestsLaunchTests.swift */,
 			);
 			path = TicTacToeUITests;
+			sourceTree = "<group>";
+		};
+		12ADA7412859CB8900028312 /* Delegate */ = {
+			isa = PBXGroup;
+			children = (
+				12ADA7112859CA6000028312 /* AppDelegate.swift */,
+				12ADA7132859CA6000028312 /* SceneDelegate.swift */,
+			);
+			path = Delegate;
+			sourceTree = "<group>";
+		};
+		12ADA7422859CB9D00028312 /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				12ADA7152859CA6000028312 /* ViewController.swift */,
+			);
+			path = Controller;
+			sourceTree = "<group>";
+		};
+		12ADA7432859CBA900028312 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				12ADA7172859CA6000028312 /* Main.storyboard */,
+				12ADA71C2859CA6200028312 /* LaunchScreen.storyboard */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		12ADA7442859CBB500028312 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				12ADA7452859CBF400028312 /* Game.swift */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -261,6 +296,7 @@
 				12ADA7162859CA6000028312 /* ViewController.swift in Sources */,
 				12ADA7122859CA6000028312 /* AppDelegate.swift in Sources */,
 				12ADA7142859CA6000028312 /* SceneDelegate.swift in Sources */,
+				12ADA7462859CBF400028312 /* Game.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -366,7 +402,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -420,7 +456,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
