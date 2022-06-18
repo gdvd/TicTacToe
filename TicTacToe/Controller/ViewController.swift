@@ -27,14 +27,19 @@ class ViewController: UIViewController {
     private let thickness = CGFloat(5) // line thickness of the table 
     private let imgCircleStr = "circle.png"
     private let imgCrossStr = "cross.png"
-    private let countDownMax = 10
+    private let imgCircleRedStr = "circleRed.png"
+    private let imgCrossRedStr = "crossRed.png"
+    private let lineWinnerStr = "lineWinner"
+    private let countDownMax = 30
+    private var widthThird: CGFloat = 0
+    private var heightThird: CGFloat = 0
     
     //MARK: - At opening
     override func viewDidLoad() {
         super.viewDidLoad()
+
         // Get game
         game.initializeGame()
-        playerNb = 1
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -49,14 +54,11 @@ class ViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         drawTable()
         updateScoreOnScreen()
-        startTimer()
-        selectPlayerNb(playerBn: 1)
+        showMsgBeginGame()
     }
     
     //MARK: - Game status    
     private func playerLoose(playerNb: Int) {
-        resetTable()
-        game.initializeGame()
         
         if playerNb == 1 {
             game.playerTwoScore += 1
@@ -64,17 +66,45 @@ class ViewController: UIViewController {
             game.playerOneScore += 1
         }
         updateScoreOnScreen()
-        showAlert(msg: "")
     }
     
-    private func showAlert(msg: String){
-        let alertVC = UIAlertController(title: "Game over", message: msg, preferredStyle: .alert)
-        alertVC.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in self.continuGame() }))
+    private func showMsgBeginGame(){
+        let alertVC = UIAlertController(title: title, message: "Begin new game", preferredStyle: .alert)
+        alertVC.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in self.startGame() }))
         self.present(alertVC, animated: true, completion: nil)
+    }
+    
+    private func showAlert(msg: String, title: String){
+        let alertVC = UIAlertController(title: title, message: msg, preferredStyle: .alert)
+        alertVC.addAction(UIAlertAction(title: "Reset All", style: .default, handler: { _ in self.continuGame() }))
+        alertVC.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in self.resetGame() }))
+        self.present(alertVC, animated: true, completion: nil)
+    }
+    
+    private func startGame() {
+        startTimer()
+        playerNb = 1
+        selectPlayerNb(playerBn: playerNb)
+    }
+    
+    private func resetGame() {
+        startTimer()
+        resetTable()
+        game.initializeGame()
+        game.playerOneScore = 0
+        game.playerTwoScore = 0
+        
+        runCount = countDownMax
+        playerNb = 1
+        selectPlayerNb(playerBn: playerNb)
     }
     
     private func continuGame(){
         runCount = countDownMax
+        
+        resetTable()
+        game.initializeGame()
+        
         if playerNb == 1 {
             playerNb = 2
             selectPlayerNb(playerBn: 2)
@@ -92,17 +122,11 @@ class ViewController: UIViewController {
         }
     }
 
-    func stopTimer() {
-        if timer != nil {
-            timer?.invalidate()
-            timer = nil
-        }
-    }
-
     @objc func loop() {
         if runCount == 0 {
             runCount -= 1 
             playerLoose(playerNb: playerNb)
+            showAlert(msg: "Continue", title: "Game over")
         } else if runCount > 0{
             runCount -= 1  
             let minutes = Int(runCount) / 60 % 60
@@ -113,6 +137,36 @@ class ViewController: UIViewController {
     
     
     //MARK: - Actions on table
+    
+    fileprivate func ifSomeoneWins(_ tag: Int) -> Bool {
+        let unit = tag % 10
+        let ten = Int (tag / 10 )
+        
+        if game.testLine(lineNb: unit, playerNb: playerNb) {
+            drawLineWinnerInRed(lineNb: unit, playerNb: playerNb)
+            return true
+        } else if game.testCol(colNb: ten, playerNb: playerNb) {
+            drawColWinnerInRed(colNb: ten, playerNb: playerNb)
+            return true
+        } else if game.testDiaDown(playerNb: playerNb) {
+            drawDiaDownWinnerInRed(playerNb: playerNb)
+            return true
+        } else if game.testDiaUp(playerNb: playerNb) {
+            drawDiaUpWinnerInRed(playerNb: playerNb)
+            return true
+        }
+        return false
+    }
+    
+    fileprivate func togglePlyerNb() {
+        if playerNb == 1 {
+            playerNb = 2
+            selectPlayerNb(playerBn: 2)
+        } else {
+            playerNb = 1
+            selectPlayerNb(playerBn: 1)
+        }
+    }
     
     @objc private func buttonIsTouch(btn: UIButton!){
         let tag = btn.tag
@@ -126,28 +180,22 @@ class ViewController: UIViewController {
                 }
             }
             
-            //TODO: test if win
-            // Search if someone wins
-            let unit = tag % 10
-            let ifLineWin = game.testLine(lineNb: unit, playerNb: playerNb) 
-            
-            //let ten = Int (tag / 10 )
-            //let ifColWin = game.testCol(colNb: unit, playerNb: playerNb)
-            
-            //TODO: if win -> finich game
-            
-            if playerNb == 1 {
-                playerNb = 2
-                selectPlayerNb(playerBn: 2)
+            if ifSomeoneWins(tag) {
+                playerLoose(playerNb: playerNb == 1 ? 2 : 1)
+                showAlert(msg: "Player \(playerNb) wins", title: "Game over")
             } else {
-                playerNb = 1
-                selectPlayerNb(playerBn: 1)
-            } 
+                togglePlyerNb()
+                if game.countNbEmptyBox() == 0 {
+                    showAlert(msg: "There is no winner", title: "OK")
+                } else {
+                    runCount = countDownMax
+                }
+            }
         }
     }
     
     private func resetTable(){
-        selectPlayerNb(playerBn: 0)
+        selectPlayerNb(playerBn: playerNb == 1 ? 2 : 1)
         listButtons.forEach { btn in
             btn.setImage(nil, for: .normal)
         }
@@ -170,8 +218,8 @@ class ViewController: UIViewController {
     }
     
     private func drawTable(){
-        let widthThird = self.viewGame.layer.bounds.width / CGFloat(game.sizeSquare)
-        let heightThird = self.viewGame.layer.bounds.height / CGFloat(game.sizeSquare)
+        self.widthThird = self.viewGame.layer.bounds.width / CGFloat(game.sizeSquare)
+        self.heightThird = self.viewGame.layer.bounds.height / CGFloat(game.sizeSquare)
         
         drawLinesTable(heightThird, widthThird)
         addButtonForEachBox(heightThird, widthThird)
@@ -212,5 +260,57 @@ class ViewController: UIViewController {
         lineVertTwo.backgroundColor = .black
         self.viewGame.addSubview(lineVertTwo)
     }
+    //MARK: - Manage the winning pieces
+    private func drawLineWinnerInRed(lineNb: Int, playerNb: Int){
+        listButtons.forEach { btn in
+            let unit = btn.tag % 10
+            if unit == lineNb {
+                if playerNb == 1 {
+                    btn.setImage(UIImage(named: imgCircleRedStr), for: .normal)
+                } else {
+                    btn.setImage(UIImage(named: imgCrossRedStr), for: .normal)
+                }
+            }
+        }
+    }
+    private func drawColWinnerInRed(colNb: Int, playerNb: Int){
+        listButtons.forEach { btn in
+            let ten = Int (btn.tag / 10 )
+            if ten == colNb {
+                if playerNb == 1 {
+                    btn.setImage(UIImage(named: imgCircleRedStr), for: .normal)
+                } else {
+                    btn.setImage(UIImage(named: imgCrossRedStr), for: .normal)
+                }
+            }
+        }
+    }
+    private func drawDiaDownWinnerInRed(playerNb: Int){
+        listButtons.forEach { btn in
+            let ten = Int (btn.tag / 10 )
+            let unit = btn.tag % 10
+            if ten == unit {
+                if playerNb == 1 {
+                    btn.setImage(UIImage(named: imgCircleRedStr), for: .normal)
+                } else {
+                    btn.setImage(UIImage(named: imgCrossRedStr), for: .normal)
+                }
+            }
+        }
+    }
+    private func drawDiaUpWinnerInRed(playerNb: Int){
+        listButtons.forEach { btn in
+            let ten = Int (btn.tag / 10 )
+            let unit = btn.tag % 10
+            if ten + unit == 4 {
+                if playerNb == 1 {
+                    btn.setImage(UIImage(named: imgCircleRedStr), for: .normal)
+                } else {
+                    btn.setImage(UIImage(named: imgCrossRedStr), for: .normal)
+                }
+            }
+        }
+    }
+    
 }
 

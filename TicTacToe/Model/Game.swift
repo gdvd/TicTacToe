@@ -45,26 +45,53 @@ class Game {
         }
     }
     
-    //TODO: test if win
-    func testLine(lineNb: Int, playerNb: Int) -> Int {
-        var nbElementsFound = 0
-        table.forEach { ele in
-            let unit = ele.tag % 10
-            if unit == lineNb {
-                if ele.state == .circle && playerNb == 1 {
-                    nbElementsFound += 1
-                }
-                //TODO: Player2
-            }
+    func countNbEmptyBox() -> Int {
+        let filtered = table.filter { ele in
+            return ele.state == .empty
         }
-        return nbElementsFound
+        return filtered.count
     }
     
-    func testCol(colNb: Int, playerNb: Int) -> Int {
-        
-        return 0
+    //MARK: - Test if the position is winning (lines/columns/diagonals)
+    func testLine(lineNb: Int, playerNb: Int) -> Bool {
+        let state: State = (playerNb == 1 ? .circle : .cross)
+        let filtered = table.filter { ele in
+            let unit = ele.tag % 10
+            return unit == lineNb && ele.state == state
+        }
+        return filtered.count == 3
     }
     
+    func testCol(colNb: Int, playerNb: Int) -> Bool {
+        let state: State = (playerNb == 1 ? .circle : .cross)
+        let filtered = table.filter { ele in
+            let ten = Int (ele.tag / 10 )
+            return ten == colNb && ele.state == state
+        }
+        return filtered.count == 3
+    }
+    
+    func testDiaDown(playerNb: Int) -> Bool {
+        let state: State = (playerNb == 1 ? .circle : .cross)
+        let filtered = table.filter { ele in
+            let unit = ele.tag % 10
+            let ten = Int (ele.tag / 10 )
+            return unit == ten && ele.state == state
+        }
+        return filtered.count == 3
+    }
+    
+    func testDiaUp(playerNb: Int) -> Bool {
+        let state: State = (playerNb == 1 ? .circle : .cross)
+        let filtered = table.filter { ele in
+            let unit = ele.tag % 10
+            let ten = Int (ele.tag / 10 )
+            return (unit + ten) == 4 && ele.state == state
+        }
+        return filtered.count == 3
+    }
+    
+    //MARK: - Entity
     class Element {
         var state: State
         var tag: Int = 0
